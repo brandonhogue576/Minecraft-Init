@@ -1,0 +1,94 @@
+#!/bin/bash
+# /etc/init.d/minecraft
+
+  ### BEGIN INIT INFO
+  # Provides:   minecraft
+  # Required-Start: $local_fs $remote_fs
+  # Required-Stop:  $local_fs $remote_fs
+  # Should-Start:   $network
+  # Should-Stop:    $network
+  # Default-Start:  2 3 4 5
+  # Default-Stop:   0 1 6
+  # Short-Description:    Minecraft Server Controller
+  # Description:    Starts, stops, and restarts Minecraft servers without a hastle.  Simple and easy to use script.  
+  ### END INIT INFO
+
+#Settings
+SERVICE='server.jar'
+USERNAME="minecraft"
+MCPATH='/home/minecraft/server'
+
+ME=`whoami`
+as_user() {
+  if [ "$ME" == "$USERNAME" ] ; then
+    bash -c "$1"
+  else
+    su - $USERNAME -c "$1"
+  fi
+}
+
+mc_start() {
+  if ps ax | grep -v grep | grep -v -i SCREEN | grep $SERVICE > /dev/null
+  then
+    echo "Unable to start but server was already running!"
+  else
+    echo "Server was not running starting up now!"
+    cd $MCPATH
+    as_user "cd $MCPATH && screen -dmS mc_server java -Xmx2048M -Xms2048M -jar minecraft_server.jar nogui"
+    sleep 30
+    if ps ax | grep -v grep | grep -v -i SCREEN | grep $SERVICE > /dev/null
+    then
+      echo "Server is now running."
+    else
+      echo "Server wasn't able to be started."
+    fi
+  fi
+}
+
+mc_stop() {
+        if ps ax | grep -v grep | grep -v -i SCREEN | grep $SERVICE > /dev/null
+        then
+                echo "Server has been confirmed to be running, shutting server down."
+              as_user "screen -p 0 -S mc_server -X eval 'stuff \"say SERVER SHUTTING DOWN IN 10 SECONDS. Saving map...\"\015'"
+                as_user "screen -p 0 -S mc_server -X eval 'stuff \"save-all\"\015'"
+                sleep 20
+                as_user "screen -p 0 -S mc_server -X eval 'stuff \"stop\"\015'"
+                sleep 7
+        else
+                echo "Server isn't running looks like you've been duped."
+        fi
+        if ps ax | grep -v grep | grep -v -i SCREEN | grep $SERVICE > /dev/null
+        then
+                echo "Server is still online; the server didn't respond to our request to stop."
+        else
+                echo "Server has shut down."
+        fi
+}
+
+case "$1" in
+  start)
+    mc_start
+    ;;
+  stop)
+    mc_stop
+    ;;
+  restart)
+    mc_stop
+    mc_start
+    ;;
+  status)
+    if ps ax | grep -v grep | grep -v -i SCREEN | grep $SERVICE > /dev/null
+    then
+      echo "Server is running."
+    else
+      echo "Server is not running."
+    fi
+    ;;
+
+  *)
+  echo "Usage: /etc/init.d/minecraft {start|stop|status|restart}"
+  exit 1
+  ;;
+esac
+
+exit 0

@@ -44,13 +44,23 @@ mc_start() {
     fi
   fi
 }
+mc_reload() {
+        if ps ax | grep -v grep | grep -v -i SCREEN | grep $SERVICE > /dev/null
+        then
+                echo "Server has been confirmed to be running, reloading server."
+              as_user "screen -p 0 -S mc_server -X eval 'stuff \"reload\"\015'"
+                echo "Server is reloading.'
+        else
+                echo "Server isn't running looks like you've been duped."
+        fi
+}
 
 mc_saveoff() {
         if ps ax | grep -v grep | grep -v -i SCREEN | grep $SERVICE > /dev/null
         then
                 echo "Server has been confirmed to be running, turning save off."
               as_user "screen -p 0 -S mc_server -X eval 'stuff \"save-off\"\015'"
-                echo "Save has been turned off.
+                echo "Save has been turned off."
         else
                 echo "Server isn't running looks like you've been duped."
         fi
@@ -102,14 +112,17 @@ case "$1" in
   saveoff)
     mc_saveoff
     ;;
-  start)
+  reload)
+    mc_saveoff
+    mc_saveall
+    mc_reload
+    ;;
+  saveall)
     mc_saveall
     ;;
-
   saveon)
     mc_saveon
     ;;
-
   start)
     mc_start
     ;;

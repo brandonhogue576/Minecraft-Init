@@ -9,7 +9,7 @@
   # Should-Stop:    $network
   # Default-Start:  2 3 4 5
   # Default-Stop:   0 1 6
-  # Short-Description:    Minecraft Server Controller
+  # Short-Description:    Minecraft-Init
   # Description:    Starts, stops, and restarts Minecraft servers without a hastle.  Simple and easy to use script.  
   ### END INIT INFO
 

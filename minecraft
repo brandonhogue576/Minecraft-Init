@@ -14,12 +14,12 @@
   ### END INIT INFO
 
 #Settings
-SERVICE='server.jar'
-USERNAME="minecraft"
-MCPATH='/home/minecraft/server'
-MAXMEM='1024M'
-MINMEM='64M'
-TWEAKS=''
+SERVICE='server.jar' #Name of the jar that you are running.
+USERNAME="minecraft" #Username used for running the Minecraft server.
+MCPATH='/home/minecraft/server' #Path to the server directory.
+MAXMEM='1024M' #Maximum memory in Java format (M, G, etc.)
+MINMEM='64M' #Minimum memory in Java format (M, G, etc.)
+TWEAKS='' #Allows for you to feed other variables to Minecraft/Java.
 
 ME=`whoami`
 as_user() {

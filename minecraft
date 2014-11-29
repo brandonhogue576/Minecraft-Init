@@ -17,6 +17,9 @@
 SERVICE='server.jar'
 USERNAME="minecraft"
 MCPATH='/home/minecraft/server'
+MAXMEM='1024M'
+MINMEM='64M'
+TWEAKS=''
 
 ME=`whoami`
 as_user() {
@@ -34,7 +37,7 @@ mc_start() {
   else
     echo "Server was not running starting up now!"
     cd $MCPATH
-    as_user "cd $MCPATH && screen -dmS mc_server java -Xmx2048M -Xms2048M -jar minecraft_server.jar nogui"
+    as_user "cd $MCPATH && screen -dmS mc_server java -Xmx$MAXMEM -Xms$MINMEM -jar $SERVICE $TWEAKS nogui"
     sleep 30
     if ps ax | grep -v grep | grep -v -i SCREEN | grep $SERVICE > /dev/null
     then
